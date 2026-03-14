@@ -11,6 +11,9 @@ RUN npm install
 COPY . .
 RUN npx prisma generate
 
+# Forzamos la creación de dist y compilamos
+RUN rm -rf dist && npx tsc
+
 # Build the project
 RUN npm run build
 
