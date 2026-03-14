@@ -16,7 +16,7 @@ services:
       - /opt/openclaw-orchestrator/volumes/{client_id}:/app/data
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.claw-{client_id}.rule=Host(`{client_id}.midominio.com`)"
+      - "traefik.http.routers.claw-{client_id}.rule=Host(`{client_id}.{base_domain}`)"
       - "traefik.http.routers.claw-{client_id}.entrypoints=websecure"
       - "traefik.http.routers.claw-{client_id}.tls.certresolver=myresolver"
       - "traefik.http.services.claw-{client_id}.loadbalancer.server.port=8080" # Adjust port as needed

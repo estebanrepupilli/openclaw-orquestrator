@@ -22,7 +22,7 @@ export class InstanceController {
       const container = await dockerService.createInstance({
         instanceId: instance.id,
         subdomain,
-        domain: process.env.BASE_DOMAIN || 'midominio.com',
+        domain: process.env.BASE_DOMAIN || '',
       });
 
       await prisma.instance.update({
