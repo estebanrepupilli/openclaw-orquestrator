@@ -25,6 +25,7 @@ services:
     container_name: socket-proxy
     restart: always
     environment:
+      - DOCKER_API_VERSION=1.41
       - CONTAINERS=1
       - NETWORKS=1
       - VOLUMES=1
