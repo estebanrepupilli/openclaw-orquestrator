@@ -1,0 +1,61 @@
+services:
+  # Traefik: Secret Routing & SSL Termination
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - orchestrator_net
+    volumes:
+      - ./config/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./config/acme.json:/etc/traefik/acme.json
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dashboard.rule=Host(`traefik.${BASE_DOMAIN}`)"
+      - "traefik.http.routers.dashboard.service=api@internal"
+      - "traefik.http.routers.dashboard.entrypoints=websecure"
+      - "traefik.http.routers.dashboard.tls.certresolver=myresolver"
+
+  # Docker Socket Proxy: The Security Shield
+  socket-proxy:
+    image: tecnativa/docker-socket-proxy
+    container_name: socket-proxy
+    restart: always
+    environment:
+      - CONTAINERS=1
+      - NETWORKS=1
+      - VOLUMES=1
+      - SERVICES=0
+      - SWARM=0
+      - IMAGES=0
+      - POST=1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - orchestrator_net
+
+  # Control Panel: The actual orchestrator logic
+  panel:
+    build: .
+    container_name: openclaw-panel
+    restart: always
+    env_file: .env
+    environment:
+      - DOCKER_HOST=tcp://socket-proxy:2375
+    depends_on:
+      - socket-proxy
+    networks:
+      - orchestrator_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.panel.rule=Host(`panel.${BASE_DOMAIN}`)"
+      - "traefik.http.routers.panel.entrypoints=websecure"
+      - "traefik.http.routers.panel.tls.certresolver=myresolver"
+
+networks:
+  orchestrator_net:
+    name: orchestrator_net
+    driver: bridge
