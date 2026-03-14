@@ -1,7 +1,7 @@
 services:
   # Traefik: Secret Routing & SSL Termination
   traefik:
-    image: traefik:v2.10
+    image: traefik
     container_name: traefik
     restart: always
     ports:
@@ -25,7 +25,6 @@ services:
     container_name: socket-proxy
     restart: always
     environment:
-      - DOCKER_API_VERSION=1.41
       - CONTAINERS=1
       - NETWORKS=1
       - VOLUMES=1
@@ -55,7 +54,6 @@ services:
       - "traefik.http.routers.panel.rule=Host(`panel.${BASE_DOMAIN}`)"
       - "traefik.http.routers.panel.entrypoints=web"
       - "traefik.http.routers.panel.tls.certresolver=myresolver"
-      - "traefik.http.services.panel.loadbalancer.server.port=3000"
 
 networks:
   orchestrator_net:

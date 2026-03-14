@@ -18,7 +18,6 @@ providers:
     endpoint: "tcp://socket-proxy:2375" # Connects to the secure proxy, not the socket
     exposedByDefault: false
     network: orchestrator_net
-    apiVersion: "1.41"
 
 certificatesResolvers:
   myresolver:
